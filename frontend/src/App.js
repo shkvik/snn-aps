@@ -18,10 +18,10 @@ function App() {
         }
       )
   },[]);
-
+  var res = JSON.stringify(data)
   return (
     <div className="App">
-        {data.test}
+      {res}
     </div>
   );
 }
