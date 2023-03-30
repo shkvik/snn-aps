@@ -1,27 +1,46 @@
-import logo from './logo.svg';
-import React, {useEffect, useState} from 'react'
+import React, {useState} from 'react'
 import './App.css';
+import './styles/App.css';
+import NodeItem from './components/NodeItem';
+import Body from './components/layout/body/Body';
+import Menu from './components/layout/menu/Menu';
+import Content from './components/layout/content/Content';
+
 
 function App() {
+  const [posts, setPosts] = useState([
+    {id: 1, title: 'Javascript', body: 'Description'},
+    {id: 2, title: 'C++', body: 'Description'},
+    {id: 3, title: 'C#', body: 'Description'}
+  ])
 
-  const [data, setData] = useState();
 
-  useEffect(()=>{
-    fetch('http://localhost:8080/')
-      .then(res => res.json())
-      .then(
-        (result)=> {
-          setData(result);
-        },
-        (error) => {
 
-        }
-      )
-  },[]);
-  var res = JSON.stringify(data)
   return (
     <div className="App">
-      {res}
+      
+      <Body>
+        <Content>
+          <Menu>
+            <h1 style={{textAlign: 'center'}}> Список узлов </h1>
+            {posts.map(post => 
+                <NodeItem post={post} key={post.id}/>
+            )}
+          </Menu>
+          <Menu>
+            <h1 style={{textAlign: 'center'}}> Список узлов </h1>
+            {posts.map(post => 
+                <NodeItem post={post} key={post.id}/>
+            )}
+          </Menu>
+          <Menu>
+            <h1 style={{textAlign: 'center'}}> Список узлов </h1>
+            {posts.map(post => 
+                <NodeItem post={post} key={post.id}/>
+            )}
+          </Menu>
+        </Content>
+      </Body>
     </div>
   );
 }

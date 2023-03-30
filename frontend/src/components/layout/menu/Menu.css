@@ -1,0 +1,9 @@
+.menu {
+    width: 300px;
+    min-height: 1200px;
+    /* margin-top: 0%;
+    margin-left: 0%; */
+    border: 2px solid white;
+    display: flex;
+    flex-direction: column;
+}
