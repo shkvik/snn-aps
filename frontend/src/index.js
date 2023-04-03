@@ -4,11 +4,8 @@ import './index.css';
 import Home from './App';
 import reportWebVitals from './reportWebVitals';
 
-import {
-  createBrowserRouter,
-  RouterProvider,
-} from "react-router-dom";
-import { element } from 'prop-types';
+import {createBrowserRouter,RouterProvider,} from "react-router-dom";
+
 import Modbus from './pages/Modbus';
 
 const router = createBrowserRouter([

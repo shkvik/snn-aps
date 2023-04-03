@@ -1,6 +1,7 @@
 import React from 'react';
 import Layout from '../components/layout/Layout';
 import { useParams } from "react-router-dom";
+import DiscreteInputs from '../components/connection/chart/modbus/discreteInputs/DiscreteInputs';
 
 const Modbus = () => {
 
@@ -8,7 +9,9 @@ const Modbus = () => {
     
     return (
         <Layout>
-            <h1> Здорово говно {id} </h1>
+            <h1> Активность запросов</h1>
+            <DiscreteInputs/>
+            <h1> Значения регистров </h1>
         </Layout>
     );
 };
