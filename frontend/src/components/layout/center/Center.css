@@ -1,0 +1,7 @@
+.center {
+    width: 80%;
+    height: 100%;
+    border: 2px solid rgb(137, 137, 250);
+    text-align: center;
+    color: rgba(26, 255, 0, 0.502);
+}

@@ -22,7 +22,7 @@ ChartJS.register(
     Legend
   );
 
-const scales = {
+  const scales = {
     x: { display: false, grid: { display: false } },
     y: { display: false, grid: { display: false } }
 }
@@ -41,8 +41,6 @@ const options = {
     
     plugins
 };
-
-
 
 const datasets = [
     {
@@ -63,24 +61,17 @@ for(var i = 0; i < datasets[0].data.length ;i++){
 
 const labels = dbg_labels;
 
-
 const data = {
   labels,
   datasets
 };
 
-const NodeItem = (props) => {
-
+const Activity = (props) => {
     return (
-        <div className="post">
-            <div>
-                Узел
-            </div>
-            <div style={{ width: '750px', height: '70px', background: 'black', borderRadius: '15px', padding: '8px'}}>
-                <Line data={data} options={options} />
-            </div>
+        <div style={{ width: '80%', height: '70px', background: 'black', borderRadius: '15px', padding: '8px'}}>
+            <Line data={data} options={options} />
         </div>
     )
 }
 
-export default NodeItem;
+export default Activity;
