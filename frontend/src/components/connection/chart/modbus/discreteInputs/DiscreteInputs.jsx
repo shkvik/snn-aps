@@ -58,12 +58,13 @@ const options = {
     scales,
     maintainAspectRatio: false,
     elements,
-    plugins
+    plugins,
+    animation: false
 };
 
 function generateRandomArray() {
     const arr = [];
-    for (let i = 0; i < 100; i++) {
+    for (let i = 0; i < 200; i++) {
       const randomNum = Math.floor(Math.random() * 2);
       arr.push(randomNum);
     }
@@ -107,7 +108,6 @@ const DiscreteInputs = (props) => {
                 data: generateRandomArray(),
                 backgroundColor: 'rgba(255, 99, 132, 0.5)',
                 pointRadius: 0, // скрыть точки
-                // cubicInterpolationMode: 'monotone', // сделать линию более гладкой
                 steppedLine: true, // Включаем шаговые линии
                 borderWidth: 1
             }
@@ -132,7 +132,7 @@ const DiscreteInputs = (props) => {
     }, [data]);
 
     return (
-        <div style={{ width: '80%', height: '80px', background: 'black', borderRadius: '15px', padding: '8px'}}>
+        <div style={{ width: '80%', height: '50px', background: 'black', borderRadius: '15px', padding: '8px'}}>
             <Line data={data} options={options} />
         </div>
     )
