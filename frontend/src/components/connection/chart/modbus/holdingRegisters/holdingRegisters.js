@@ -23,25 +23,16 @@ ChartJS.register(
     Legend
   );
 
-  const scales = {
+const scales = {
     x: { display: false, grid: { display: false } },
-    y: {
-        display: false,
-        ticks: {
-            suggestedMax: 1,
-            suggestedMin: 0,
-            stepSize: 1
-        },
-        grid: { display: false } 
-    }
+    y: { display: false, grid: { display: false } }
 }
+        
+        
+    
 
 const plugins = {
     legend: { display: false },
-    title: {
-        display: false,
-        text: 'Chart.js Bar Chart',
-    }
 }
 
 const elements = {
@@ -50,7 +41,6 @@ const elements = {
         borderWidth: 2,
         tension: 0.1,
         fill: false,
-        stepped: true
     }
 }
 
@@ -64,8 +54,8 @@ const options = {
 
 function generateRandomArray() {
     const arr = [];
-    for (let i = 0; i < 100; i++) {
-      const randomNum = Math.floor(Math.random() * 2);
+    for (let i = 0; i < 200; i++) {
+      const randomNum = Math.floor(Math.random() * 100);
       arr.push(randomNum);
     }
     return arr;
@@ -79,7 +69,6 @@ const datasets = [
         backgroundColor: 'rgba(255, 99, 132, 0.5)',
         pointRadius: 0, // скрыть точки
         // cubicInterpolationMode: 'monotone', // сделать линию более гладкой
-        steppedLine: true, // Включаем шаговые линии
         borderWidth: 1
     }
 ]
@@ -98,17 +87,23 @@ const data = {
 };
 
 
-const DiscreteInputs = (props) => {
+const HoldingRegisters = (props) => {
 
     const [data, setData] = useState({
         labels: [],
         datasets: [
             {
-                borderColor: 'rgba(0, 255, 30)',
+                borderColor: 'rgba(22, 119, 255, 1)',
                 data: generateRandomArray(),
-                backgroundColor: 'rgba(255, 99, 132, 0.5)',
+                // backgroundColor: 'rgba(255, 99, 132, 0.5)',
                 pointRadius: 0, // скрыть точки
-                steppedLine: true, // Включаем шаговые линии
+                borderWidth: 1
+            },
+            {
+                borderColor: 'rgba(0, 0, 0, 0)',
+                data: generateRandomArray(),
+                // backgroundColor: 'rgba(255, 99, 132, 0.5)',
+                pointRadius: 0, // скрыть точки
                 borderWidth: 1
             }
         ]
@@ -122,7 +117,13 @@ const DiscreteInputs = (props) => {
             datasets: [
               {
                 data: generateRandomArray(),
-              }
+              },
+            //   {
+            //     data: generateRandomArray(),
+            //     borderColor: 'rgba(255, 0, 0, 1)',
+            //     pointRadius: 0, // скрыть точки
+            //     borderWidth: 1
+            //   },
             ]
           };
           setData(newData);
@@ -132,10 +133,10 @@ const DiscreteInputs = (props) => {
     }, [data]);
 
     return (
-        <div style={{ width: '80%', height: '50px', background: 'black', borderRadius: '15px', padding: '8px'}}>
+        <div style={{ width: '100%', height: '50px',/* background: 'black',*/ borderRadius: '15px', padding: '8px'}}>
             <Line data={data} options={options} />
         </div>
     )
 }
 
-export default DiscreteInputs;
+export default HoldingRegisters;

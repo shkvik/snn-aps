@@ -16,15 +16,15 @@ const DescreteInputsCell = (props) => {
       };
     return (
         <div className='descreteInputsCell'>
-            <div>
+            {/* <div>
                 id: 1
             </div>
 
             <div>
             trained: false
-            </div>
-            <div style={{ width: 50, height: 50 }}>
-                <CircularProgressbarWithChildren 
+            </div> */}
+            {/*<div style={{ width: 50, height: 50 }}>*/}
+                {/* <CircularProgressbarWithChildren 
                     value={80}
                     styles={buildStyles({
                         // Colors
@@ -47,8 +47,8 @@ const DescreteInputsCell = (props) => {
                                  
                             />
                         </Popconfirm>                    
-                </CircularProgressbarWithChildren >
-            </div>
+                </CircularProgressbarWithChildren > */}
+            {/*</div>}*/}
             {props.children}
         </div>
     );
