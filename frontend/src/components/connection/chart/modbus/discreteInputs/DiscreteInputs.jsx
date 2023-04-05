@@ -76,7 +76,6 @@ const datasets = [
     {
         borderColor: 'rgba(0, 255, 30)',
         data: generateRandomArray(),
-        backgroundColor: 'rgba(255, 99, 132, 0.5)',
         pointRadius: 0, // скрыть точки
         // cubicInterpolationMode: 'monotone', // сделать линию более гладкой
         steppedLine: true, // Включаем шаговые линии
@@ -104,9 +103,8 @@ const DiscreteInputs = (props) => {
         labels: [],
         datasets: [
             {
-                borderColor: 'rgba(0, 255, 30)',
+                borderColor: 'rgba(22, 119, 255, 1)',
                 data: generateRandomArray(),
-                backgroundColor: 'rgba(255, 99, 132, 0.5)',
                 pointRadius: 0, // скрыть точки
                 steppedLine: true, // Включаем шаговые линии
                 borderWidth: 1
@@ -132,7 +130,7 @@ const DiscreteInputs = (props) => {
     }, [data]);
 
     return (
-        <div style={{ width: '80%', height: '50px', background: 'black', borderRadius: '15px', padding: '8px'}}>
+        <div style={{ width: '100%', height: '40px', borderRadius: '15px', padding: '8px'}}>
             <Line data={data} options={options} />
         </div>
     )

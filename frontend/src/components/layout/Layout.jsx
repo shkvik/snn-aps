@@ -1,4 +1,4 @@
-import { FileOutlined, PieChartOutlined, UserOutlined, DesktopOutlined, TeamOutlined } from '@ant-design/icons';
+import { FileOutlined, DashboardOutlined, UserOutlined, DesktopOutlined, TeamOutlined } from '@ant-design/icons';
 import { Breadcrumb, Layout, Menu, theme } from 'antd';
 import { useState } from 'react';
 import DiscreteInputs from '../connection/chart/modbus/discreteInputs/DiscreteInputs';
@@ -14,7 +14,7 @@ function getItem(label, key, icon, children) {
   };
 }
 const items = [
-  getItem('Option 1', '1', <PieChartOutlined />),
+  getItem('Dashboard', '1', <DashboardOutlined />),
   getItem('Option 2', '2', <DesktopOutlined />),
   getItem('User', 'sub1', <UserOutlined />, [
     getItem('Tom', '3'),
@@ -62,7 +62,7 @@ const LayoutAntDesign = (props) => {
               margin: '16px 0',
             }}
           >
-            <Breadcrumb.Item>User</Breadcrumb.Item>
+            <Breadcrumb.Item>Dashboard</Breadcrumb.Item>
             <Breadcrumb.Item>Bill</Breadcrumb.Item>
           </Breadcrumb>
           <div
