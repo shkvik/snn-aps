@@ -7,6 +7,8 @@ import reportWebVitals from './reportWebVitals';
 import {createBrowserRouter, RouterProvider,} from "react-router-dom";
 
 import Modbus from './pages/Modbus';
+import Dashboard from './pages/Dashboard';
+
 
 const router = createBrowserRouter([
   {
@@ -14,9 +16,14 @@ const router = createBrowserRouter([
     element: <Home/>,
   },
   {
+    path: "/dashboard",
+    element: <Dashboard/>
+  },
+  {
     path: "/modbus/:id",
     element: <Modbus/>
-  }
+  },
+
 ]);
 
 

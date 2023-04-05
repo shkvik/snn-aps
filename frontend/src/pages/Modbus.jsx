@@ -65,12 +65,17 @@
 // export default Modbus;
 import React, {useState} from 'react'
 import { DownOutlined, ThunderboltOutlined } from '@ant-design/icons';
-import { Badge, Dropdown, Space, Table, Button, Popconfirm, message, Progress } from 'antd';
+import { Badge, Dropdown, Space, Table, Button, Popconfirm, message, Progress, Card, Col, Row  } from 'antd';
 import LayoutAntDesign from '../components/layout/Layout';
 
 import DiscreteInputs from '../components/connection/chart/modbus/discreteInputs/DiscreteInputs';
 import DescreteInputsCell from './descreteInputsCell/descreteInputsCell';
 import HoldingRegisters from '../components/connection/chart/modbus/holdingRegisters/holdingRegisters';
+
+
+
+
+
 
 const Modbus = () => {
 
@@ -152,7 +157,7 @@ const Modbus = () => {
                 registerNumber: `№ ${i + 1}`,
                 name: 'Untitled',
                 upgradeNum: 'Upgraded: 56',
-                statusState: <Badge status="warning" text="Need train" />,
+                statusState: <Badge status="processing" text="Need train" />,
                 trainState: <Progress type="circle" size={35} percent={70} strokeColor={{ '0%': '#108ee9', '100%': '#87d068' }} />,
                 action: btnsRegisters(),
                 });
@@ -452,11 +457,11 @@ const Modbus = () => {
             
             <div style={{ width: '100%', height: '100%' }}>
                 <Table
-                columns={columns}
-                pagination={false}
-                bordered
-                expandedRowRender={getExpandedRowRender}
-                dataSource={data}
+                    columns={columns}
+                    pagination={false}
+                    bordered
+                    expandedRowRender={getExpandedRowRender}
+                    dataSource={data}
                 />
             </div>
         </LayoutAntDesign>

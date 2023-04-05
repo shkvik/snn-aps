@@ -1,10 +1,13 @@
 import { FileOutlined, DashboardOutlined, UserOutlined, DesktopOutlined, TeamOutlined } from '@ant-design/icons';
 import { Breadcrumb, Layout, Menu, theme } from 'antd';
 import { useState } from 'react';
+import { Outlet, Link, NavLink   } from "react-router-dom";
 import DiscreteInputs from '../connection/chart/modbus/discreteInputs/DiscreteInputs';
 import HoldingRegisters from '../connection/chart/modbus/holdingRegisters/holdingRegisters';
 import DescreteInputsCell from '../../pages/descreteInputsCell/descreteInputsCell';
 const { Header, Content, Footer, Sider } = Layout;
+
+
 function getItem(label, key, icon, children) {
   return {
     key,
@@ -13,8 +16,9 @@ function getItem(label, key, icon, children) {
     label,
   };
 }
+
 const items = [
-  getItem('Dashboard', '1', <DashboardOutlined />),
+  getItem((<NavLink to={'/Dashboard'}> Dashboard </NavLink>), '1', <DashboardOutlined />),
   getItem('Option 2', '2', <DesktopOutlined />),
   getItem('User', 'sub1', <UserOutlined />, [
     getItem('Tom', '3'),
@@ -43,7 +47,8 @@ const LayoutAntDesign = (props) => {
             background: 'rgba(255, 255, 255, 0.2)',
           }}
         />
-        <Menu theme='dark' defaultSelectedKeys={['1']} mode="inline" items={items} />
+        <Menu theme='dark' defaultSelectedKeys={['1']} mode="inline" items={items}/>
+
       </Sider>
       <Layout className="site-layout">
         <Header
@@ -64,6 +69,7 @@ const LayoutAntDesign = (props) => {
           >
             <Breadcrumb.Item>Dashboard</Breadcrumb.Item>
             <Breadcrumb.Item>Bill</Breadcrumb.Item>
+
           </Breadcrumb>
           <div
             style={{

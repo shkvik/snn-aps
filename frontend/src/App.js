@@ -17,10 +17,10 @@ function Home() {
 
   return (
       <Layout>
-        <h1 style={{textAlign: 'center'}}> Список узлов </h1>
+        {/* <h1 style={{textAlign: 'center'}}> Список узлов </h1>
         {posts.map(post => 
             <Connection id={post.id} key={post.id}/>
-        )}
+        )} */}
       </Layout>
   );
 }
