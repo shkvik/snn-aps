@@ -3,70 +3,54 @@ import LayoutAntDesign from '../components/layout/Layout';
 
 import '../pages/Dashboard.css';
 
-import Activity from '../components/connection/chart/activity/Activity';
+import Activity from '../components/connection/chart/activity/ActivityChart';
 
 import { SearchOutlined } from '@ant-design/icons';
 import { Button, Input, Space, Table, Progress, Badge} from 'antd';
-import { useRef, useState, Link, Text } from 'react';
+import { useRef, useState, Link, Text, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Highlighter from 'react-highlight-words';
 
 
-const data = [
-    {
-      key: '1',
-      id: '1',
-      age: 32,
-      source: '192.168.0.131:8080',
-      destination: '149.154.167.50:65399',
-      address: 'New York No. 1 Lake Park',
-      protocol: 'Modbus',
-      trained: <Progress percent={100} steps={5} />,
-      status: <Badge status="success" text="Normal" />,
-      activity: <Activity/>
-    },
-    {
-      key: '2',
-      id: '2',
-      age: 12,
-      source: '192.168.0.131:8080',
-      destination: '149.154.167.50:65399',
-      address: 'London No. 1 Lake Park',
-      protocol: 'Modbus',
-      trained: <Progress percent={70} steps={5} />,
-      status:  <Badge status="processing" text="Learning" />,
-      activity: <Activity/>
-    },
-    {
-      key: '3',
-      id: '3',
-      age: 32,
-      source: '192.168.0.131:8080',
-      destination: '149.154.167.50:65399',
-      address: 'Sydney No. 1 Lake Park',
-      protocol: 'Modbus',
-      trained: <Progress percent={20} steps={5} />,
-      status:  <Badge status="processing" text="Learning" />,
-      activity: <Activity/>
-    },
-    {
-      key: '4',
-      id: '4',
-      age: 32,
-      source: '192.168.0.131:8080',
-      destination: '149.154.167.50:65399',
-      address: 'London No. 2 Lake Park',
-      protocol: 'Modbus',
-      trained: <Progress percent={0} steps={5} />,
-      status:  <Badge status="default" text="Learning" />,
-      activity: <Activity/>
-    },
-  ];
+function getStatusComponent(status){
+  switch(status){
+    case "Learning": return <Badge status="success" text="Normal" />;
+  }
+}
+
+function getTrainedComponent(trained){
+  return <Progress percent={trained} steps={5} />;
+}
+
+function parseData(data) {
+  var dataConnections = new Array();
+
+  data.forEach(function(value, index) {
+      console.log(value);
+      dataConnections.push({
+        key: index + 1,
+        id: value.guid,
+        client: value.client,
+        server: value.server,
+        protocol: value.protocol,
+        trained: getTrainedComponent(value.trained),
+        status: getStatusComponent(value.status),
+        activity: <Activity guid={value.timeSeriasGuid}/>
+      });
+      
+  });
+  return dataConnections;
+}
+
 
 const Dashboard = () => {
 
+    const [data, setData] = useState(null);
+    const [socket, setSocket] = useState(null);
+
     const [searchText, setSearchText] = useState('');
     const [searchedColumn, setSearchedColumn] = useState('');
+    
     const searchInput = useRef(null);
     const handleSearch = (selectedKeys, confirm, dataIndex) => {
       confirm();
@@ -174,6 +158,14 @@ const Dashboard = () => {
     const columns = [
         {
           title: 'Id',
+          dataIndex: 'key',
+          key: 'key',
+          className: 'my-cursor-pointer', // добавляем стиль курсора
+          ...getColumnSearchProps('id'),
+          
+        },
+        {
+          title: 'GUID',
           dataIndex: 'id',
           key: 'id',
           className: 'my-cursor-pointer', // добавляем стиль курсора
@@ -181,36 +173,30 @@ const Dashboard = () => {
           
         },
         {
-            title: 'Source',
-            dataIndex: 'source',
-            key: 'source',
+            title: 'Client',
+            dataIndex: 'client',
+            key: 'client',
             className: 'my-cursor-pointer',
-            ...getColumnSearchProps('age'),
+            ...getColumnSearchProps('source'),
         },
         {
-            title: 'Destination',
-            dataIndex: 'destination',
-            key: 'destination',
+            title: 'Server',
+            dataIndex: 'server',
+            key: 'server',
             className: 'my-cursor-pointer',
-            ...getColumnSearchProps('age'),
+            ...getColumnSearchProps('destination'),
         },
         {
             title: 'Protocol',
             dataIndex: 'protocol',
             className: 'my-cursor-pointer',
             key: 'protocol',
-        },
-        {
-            title: 'Packets',
-            dataIndex: 'age',
-            className: 'my-cursor-pointer',
-            key: 'age',
+            ...getColumnSearchProps('protocol'),
         },
         {
             title: 'Status',
             dataIndex: 'status',
             className: 'my-cursor-pointer',
-            
             key: 'status',
         },
         {
@@ -231,6 +217,39 @@ const Dashboard = () => {
       const handleRowClick = (record) => {
         navigate(`/modbus/${record.id}`);
       };
+
+      useEffect(() => {
+        const ws = new WebSocket("ws://localhost:8080");
+        setSocket(ws);
+        ws.onopen = function(e) {
+          const unixTime = Math.floor(new Date().getTime() / 1000);
+          var request = {
+              jsonrpc: "2.0",
+              method: "GetConections",
+              params: [],
+              id: unixTime
+          }
+          
+          ws.send(JSON.stringify(request));
+        };
+
+        ws.onmessage = function(event) {
+          var newData = JSON.parse(event.data);
+          
+          newData = parseData(newData);
+          console.log(newData);
+          setData(newData);
+          ws.close();
+        };
+
+        ws.onclose = function(event) {
+          console.log(`close websocket`);
+        };
+
+        return () => {
+          ws.close();
+        };
+      }, []);
 
     return (
         <LayoutAntDesign>

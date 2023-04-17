@@ -2,9 +2,6 @@ import { FileOutlined, DashboardOutlined, UserOutlined, DesktopOutlined, TeamOut
 import { Breadcrumb, Layout, Menu, theme } from 'antd';
 import { useState } from 'react';
 import { Outlet, Link, NavLink   } from "react-router-dom";
-import DiscreteInputs from '../connection/chart/modbus/discreteInputs/DiscreteInputs';
-import HoldingRegisters from '../connection/chart/modbus/holdingRegisters/holdingRegisters';
-import DescreteInputsCell from '../../pages/descreteInputsCell/descreteInputsCell';
 const { Header, Content, Footer, Sider } = Layout;
 
 

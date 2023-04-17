@@ -1,6 +1,6 @@
 import React from 'react';
 import '../connection/Connection.css';
-import Activity from './chart/activity/Activity';
+import Activity from './chart/activity/ActivityChart';
 
 import { Outlet, Link, NavLink   } from "react-router-dom";
 

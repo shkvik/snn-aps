@@ -1,5 +1,4 @@
 import React , { useState, useEffect }from 'react';
-
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -12,6 +11,32 @@ import {
 } from 'chart.js';
 
 import { Line } from 'react-chartjs-2';
+
+var updatedData;
+
+try{
+  const ws = new WebSocket('ws://192.168.0.131:8080');
+
+  ws.onopen = () => {
+    console.log('WebSocket connection opened');
+  };
+
+  ws.onclose = () => {
+    console.log('WebSocket connection closed');
+  };
+
+  ws.onmessage = (event) => {
+    updatedData = JSON.parse(event.data);
+    console.log(updatedData.Modbus);
+  };
+
+  ws.send('Hello, WebSocket Server!');
+}
+catch(error){
+  console.log(error);
+}
+
+
 
 ChartJS.register(
     CategoryScale,
@@ -94,42 +119,65 @@ const HoldingRegisters = (props) => {
         datasets: [
             {
                 borderColor: 'rgba(22, 119, 255, 1)',
+                // data: generateRandomArray(),
                 data: generateRandomArray(),
                 // backgroundColor: 'rgba(255, 99, 132, 0.5)',
                 pointRadius: 0, // скрыть точки
                 borderWidth: 1
             },
-            {
-                borderColor: 'rgba(0, 0, 0, 0)',
-                data: generateRandomArray(),
-                // backgroundColor: 'rgba(255, 99, 132, 0.5)',
-                pointRadius: 0, // скрыть точки
-                borderWidth: 1
-            }
         ]
     });
 
     useEffect(() => {
-        const intervalId = setInterval(() => {
-          // Генерация случайных данных для графика
-          const newData = {
-            labels: dbg_labels,
-            datasets: [
-              {
-                data: generateRandomArray(),
-              },
-            //   {
-            //     data: generateRandomArray(),
-            //     borderColor: 'rgba(255, 0, 0, 1)',
-            //     pointRadius: 0, // скрыть точки
-            //     borderWidth: 1
-            //   },
-            ]
-          };
-          setData(newData);
-        }, 1000);
+        try
+        {
+            const ws = new WebSocket('ws://192.168.0.131:8080');
+          
+            ws.onopen = () => {
+              console.log('WebSocket connection opened');
+            };
+          
+            ws.onclose = () => {
+              console.log('WebSocket connection closed');
+            };
+          
+            ws.onmessage = (event) => {
+                updatedData = JSON.parse(event.data);
 
-        return () => clearInterval(intervalId);
+                const newData = {
+                    labels: dbg_labels,
+                    datasets: [
+                      {
+                        data: updatedData.Modbus.HoldingRegisters[0].Values,
+                      },
+                    ]
+                  };
+                
+                setData(newData)
+            };
+          
+            ws.send('Hello, WebSocket Server!');
+          }
+          catch(error){
+            console.log(error);
+          }
+
+        // const intervalId = setInterval(() => {
+        //   // Генерация случайных данных для графика
+        //   console.log(updatedData.Modbus)
+        //   const newData = {
+        //     labels: dbg_labels,
+        //     datasets: [
+        //       {
+        //         // data: generateRandomArray(),
+        //         data: updatedData.Modbus.HoldingRegisters[0].Values,
+        //       },
+        //     ]
+        //   };
+        //   setData(newData);
+        // }, 1000);
+
+        // return () => clearInterval(intervalId);
     }, [data]);
 
     return (

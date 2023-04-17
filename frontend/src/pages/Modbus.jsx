@@ -1,89 +1,135 @@
-// import React from 'react';
-// import Layout from '../components/layout/Layout';
+import React, {useState, useEffect} from 'react'
+import { useParams } from 'react-router-dom';
 
-
-
-// import Activity from '../components/connection/chart/activity/Activity';
-
-// const Modbus = () => {
-
-//     const { id } = useParams(); // получение ID из URL
-    
-//     return (
-//         <Layout>
-//             <h1> Активность запросов</h1>
-//             <DescreteInputsCell>
-//                 <HoldingRegisters/>
-//             </DescreteInputsCell>
-
-//             <DescreteInputsCell>
-//                 <HoldingRegisters/>
-//             </DescreteInputsCell>
-
-//             <DescreteInputsCell>
-//                 <HoldingRegisters/>
-//             </DescreteInputsCell>
-
-//             <DescreteInputsCell>
-//                 <HoldingRegisters/>
-//             </DescreteInputsCell>
-//             <h1> Значения регистров </h1>
-//             <h2> Descrete Inputs </h2>
-//             <DescreteInputsCell>
-//                 <DiscreteInputs/>
-//             </DescreteInputsCell>
-
-//             <DescreteInputsCell>
-//                 <DiscreteInputs/>
-//             </DescreteInputsCell>
-
-//             <DescreteInputsCell>
-//                 <DiscreteInputs/>
-//             </DescreteInputsCell>
-
-//             <DescreteInputsCell>
-//                 <DiscreteInputs/>
-//             </DescreteInputsCell>
-//             <h2> Holding Registers </h2>
-//             <DescreteInputsCell>
-//                 <HoldingRegisters/>
-//             </DescreteInputsCell>
-
-//             <DescreteInputsCell>
-//                 <HoldingRegisters/>
-//             </DescreteInputsCell>
-//             <DescreteInputsCell>
-//                 <HoldingRegisters/>
-//             </DescreteInputsCell>
-//             <DescreteInputsCell>
-//                 <HoldingRegisters/>
-//             </DescreteInputsCell>
-//         </Layout>
-//     );
-// };
-
-// export default Modbus;
-import React, {useState} from 'react'
 import { DownOutlined, ThunderboltOutlined } from '@ant-design/icons';
 import { Badge, Dropdown, Space, Table, Button, Popconfirm, message, Progress, Card, Col, Row  } from 'antd';
 import LayoutAntDesign from '../components/layout/Layout';
 
-import DiscreteInputs from '../components/connection/chart/modbus/discreteInputs/DiscreteInputs';
-import DescreteInputsCell from './descreteInputsCell/descreteInputsCell';
-import HoldingRegisters from '../components/connection/chart/modbus/holdingRegisters/holdingRegisters';
+import Activity from '../components/connection/chart/activity/ActivityChart';
+
+function getStatusComponent(status){
+    switch(status){
+        case "Learning": return <Badge status="processing" text="Learning" />;
+    }
+}
+  
+function getTrainedComponent(trained){
+    return <Progress percent={trained} steps={5} />;
+}
 
 
+function parseDataRegisters(data, type){
+    var dataConnections = new Array();
+    data.forEach(function(value, index) {
+        console.log(value);
 
+        dataConnections.push({
+            key: index + 1,
+            registerNumber: value.id,
+            name: value.name,
+            statusState: getStatusComponent(value.status),
+            trainState: <Progress type="circle" size={35} percent={value.train} strokeColor={{ '0%': '#108ee9', '100%': '#87d068' }} />,
+            time_series: <Activity guid={value.ts_guid} type={type}/>,
+        });
+        
+    });
+    return dataConnections;
+}
+
+function parseDataFunctions(data) {
+    var dataConnections = new Array();
+  
+    data.forEach(function(value, index) {
+        dataConnections.push({
+            key: index + 1,
+            code: value.code,
+            name: value.name,
+            type: value.type,
+            status: getStatusComponent(value.status),
+            train: <Progress type="circle" size={35} percent={value.train} strokeColor={{ '0%': '#108ee9', '100%': '#87d068' }} />, 
+            access: value.access,
+            activity: <Activity guid={value.ts_guid}/>,
+            
+        });
+        
+    });
+    return dataConnections;
+  }
+
+function InitModbusData(message){
+    console.log('read message')
+    
+    const data = new Array();
+    data.push({
+        key: 0,
+        direction: 'Functions Activity',
+        // action: btnTrain(),
+        status:  <Badge status="success" text="Normal" />,
+        train: <Progress type="circle" size={50} percent={20} strokeColor={{ '0%': '#108ee9', '100%': '#87d068' }} />,
+        activity: <Activity guid={message.activityGuid}/>,
+        data: message.functions,
+    });
+    
+    data.push({
+        key: 1,
+        direction: 'Discrete Inputs',
+        // action: btnTrain(),
+        status:  <Badge status="success" text="Normal" />,
+        train: <Progress type="circle" size={50} percent={90} strokeColor={{ '0%': '#108ee9', '100%': '#87d068' }} />,
+        activity: <Activity guid={message.discreteInputs[0].ts_guid} type={"Logic"}/>,
+        data: message.discreteInputs,
+    });
+
+    data.push({
+        key: 2,
+        direction: 'Coils',
+        // action: btnTrain(),
+        status:  <Badge status="success" text="Normal" />,
+        train: <Progress type="circle" size={50} percent={70} strokeColor={{ '0%': '#108ee9', '100%': '#87d068' }} />,
+        activity: <Activity guid={message.coils[0].ts_guid} type={"Logic"}/>,
+        data: message.coils,
+    });
+
+    data.push({
+        key: 3,
+        direction: 'Input Registers',
+        // action: btnTrain(),
+        status:  <Badge status="success" text="Normal" />,
+        train: <Progress type="circle" size={50} percent={100} strokeColor={{ '0%': '#108ee9', '100%': '#87d068' }} />,
+        activity: <Activity guid={message.inputRegisters[0].ts_guid}/>,
+        data: message.inputRegisters,
+    });
+
+    data.push({
+        key: 4,
+        direction: 'Holding Registers',
+        // action: btnTrain(),
+        status:  <Badge status="error" text="Alert" />,
+        train: <Progress type="circle" size={50} percent={0} strokeColor={{ '0%': '#108ee9', '100%': '#87d068' }} />,
+        activity: <Activity guid={message.holdingRegisters[0].ts_guid}/>,
+        data: message.holdingRegisters,
+    });
+    console.log(data)
+    return data;
+}
 
 
 
 const Modbus = () => {
+    const { id } = useParams();
 
-  const getExpandedRowRender = (record, index) => {
+    const [data, setData] = useState(null);
+    const [socket, setSocket] = useState(null);
 
+    console.log(id);
+
+    const getExpandedRowRender = (record, index) => {
+        
+        // console.log(`print record`)
+        console.log(record)
         let expandedRowContent;
 
-        if(index != 0){
+        if(record.direction != "Functions Activity"){
             
             const columns = [
                 {
@@ -110,7 +156,6 @@ const Modbus = () => {
                     title: 'Time Series',
                     dataIndex: 'time_series',
                     key: 'time_series',
-                    render: () =><DescreteInputsCell> <DiscreteInputs/> </DescreteInputsCell>,
                 },
                 {
                     title: 'Action',
@@ -118,7 +163,6 @@ const Modbus = () => {
                     key: 'action',
                 },
             ];
-            const data = [];
     
             const btnsRegisters = () => {
                 return(
@@ -129,9 +173,8 @@ const Modbus = () => {
                             description={'description'}
                             onConfirm={confirm}
                             okText="Yes"
-                            cancelText="No"
-                        >   
-    
+                            cancelText="No"> 
+
                             <a>Train</a>
     
                         </Popconfirm>
@@ -150,18 +193,19 @@ const Modbus = () => {
                     </Space>
                 )
             }
-    
-            for (let i = 0; i < 6; ++i) {
-            data.push({
-                key: i.toString(),
-                registerNumber: `№ ${i + 1}`,
-                name: 'Untitled',
-                upgradeNum: 'Upgraded: 56',
-                statusState: <Badge status="processing" text="Need train" />,
-                trainState: <Progress type="circle" size={35} percent={70} strokeColor={{ '0%': '#108ee9', '100%': '#87d068' }} />,
-                action: btnsRegisters(),
-                });
+            var dataType;
+
+            console.log(record)
+
+            if(record.direction == 'Discrete Inputs' || record.direction == 'Coils')
+            {
+                console.log("YES");
+                dataType = "Logic"
             }
+            else {
+                dataType = "Float"
+            }
+            const data = parseDataRegisters(record.data, dataType);
 
             expandedRowContent = (
                 <Table
@@ -210,8 +254,7 @@ const Modbus = () => {
                 {
                     title: 'Activity',
                     dataIndex: 'activity',
-                    key: 'activity',
-                    render: () =><DescreteInputsCell> <HoldingRegisters/> </DescreteInputsCell>,
+                    key: 'activity'
                 },
                 {
                     title: 'Action',
@@ -219,7 +262,7 @@ const Modbus = () => {
                     key: 'action',
                 },
             ];
-            const data = [];
+            
     
             const btnsFunctions = () => {
                 return(
@@ -232,110 +275,13 @@ const Modbus = () => {
                             okText="Yes"
                             cancelText="No"
                         >   
-    
                             <a>Train</a>
     
                         </Popconfirm>
-    
                     </Space>
                 )
             }
-    
-            
-            data.push({
-                key: 0,
-                code: '0x01',
-                name: 'Read Coils',
-                type: 'Descrete',
-                status: <Badge status="warning" text="Need train" />,
-                train: <Progress type="circle" size={35} percent={70} strokeColor={{ '0%': '#108ee9', '100%': '#87d068' }} />,
-                access: 'Read',
-                action: btnsFunctions(),
-            });
-            
-            data.push({
-                key: 1,
-                code: '0x02',
-                name: 'Read Discrete Inputs',
-                type: 'Descrete',
-                status: <Badge status="warning" text="Need train" />,
-                train: <Progress type="circle" size={35} percent={70} strokeColor={{ '0%': '#108ee9', '100%': '#87d068' }} />,
-                access: 'Read',
-                action: btnsFunctions(),
-            });
-
-            data.push({
-                key: 2,
-                code: '0x03',
-                name: 'Read Holding Registers',
-                type: '16 bit',
-                status: <Badge status="warning" text="Need train" />,
-                train: <Progress type="circle" size={35} percent={70} strokeColor={{ '0%': '#108ee9', '100%': '#87d068' }} />,
-                access: 'Read',
-                trainState: <Badge status="error" text="Not train" />,
-                action: btnsFunctions(),
-            });
-
-            data.push({
-                key: 3,
-                code: '0x04',
-                name: 'Read Input Registers',
-                type: '16 bit',
-                status: <Badge status="warning" text="Need train" />,
-                train: <Progress type="circle" size={35} percent={70} strokeColor={{ '0%': '#108ee9', '100%': '#87d068' }} />,
-                access: 'Read',
-                trainState: <Badge status="error" text="Not train" />,
-                action: btnsFunctions(),
-            });
-
-            data.push({
-                key: 4,
-                code: '0x05',
-                name: 'Write Single Coil',
-                type: 'Descrete',
-                status: <Badge status="warning" text="Need train" />,
-                train: <Progress type="circle" size={35} percent={70} strokeColor={{ '0%': '#108ee9', '100%': '#87d068' }} />,
-                access: 'Write',
-                trainState: <Badge status="error" text="Not train" />,
-                action: btnsFunctions(),
-            });
-
-            data.push({
-                key: 5,
-                code: '0x06',
-                name: 'Write Single Register',
-                type: '16 bit',
-                status: <Badge status="warning" text="Need train" />,
-                train: <Progress type="circle" size={35} percent={70} strokeColor={{ '0%': '#108ee9', '100%': '#87d068' }} />,
-                access: 'Write',
-                trainState: <Badge status="error" text="Not train" />,
-                action: btnsFunctions(),
-            });
-            
-            data.push({
-                key: 6,
-                code: '0x0F',
-                name: 'Write Multiple Coils',
-                type: 'Discrete',
-                status: <Badge status="warning" text="Need train" />,
-                train: <Progress type="circle" size={35} percent={70} strokeColor={{ '0%': '#108ee9', '100%': '#87d068' }} />,
-                access: 'Write',
-                trainState: <Badge status="error" text="Not train" />,
-                action: btnsFunctions(),
-            });
-
-            data.push({
-                key: 7,
-                code: '0x10',
-                name: 'Write Multiple Register',
-                type: '16 bit',
-                status: <Badge status="warning" text="Need train" />,
-                train: <Progress type="circle" size={35} percent={70} strokeColor={{ '0%': '#108ee9', '100%': '#87d068' }} />,
-                access: 'Write',
-                trainState: <Badge status="error" text="Not train" />,
-                action: btnsFunctions(),
-            });
-
+            const data = parseDataFunctions(record.data)
             expandedRowContent = (
                 <Table
                     columns={columns} 
@@ -351,11 +297,12 @@ const Modbus = () => {
         return expandedRowContent;
     };
 
+    
     const columns = [
         {
-            title: 'Name',
-            dataIndex: 'name',
-            key: 'name',
+            title: 'Direction',
+            dataIndex: 'direction',
+            key: 'direction',
         },
         {
             title: 'Status',
@@ -403,58 +350,42 @@ const Modbus = () => {
         </Popconfirm> )
     }
 
-    const data = [];
+    useEffect(() => {
+        const ws = new WebSocket("ws://localhost:8080");
+        setSocket(ws);
+        ws.onopen = function(e) {
+            const unixTime = Math.floor(new Date().getTime() / 1000);
+            var request = {
+                jsonrpc: "2.0",
+                method: "GetConnectionData",
+                params: [id],
+                id: unixTime
+            }
+            ws.send(JSON.stringify(request));
+        };
 
+        ws.onmessage = function(event) {
+          var newData = JSON.parse(event.data);
+          console.log(newData);
+          newData = InitModbusData(newData);
+            
+          console.log(newData);
+          setData(newData);  
+          ws.close();
+        };
 
-    data.push({
-        key: 0,
-        name: 'Functions Activity',
-        action: btnTrain(),
-        status:  <Badge status="success" text="Normal" />,
-        train: <Progress type="circle" size={50} percent={20} strokeColor={{ '0%': '#108ee9', '100%': '#87d068' }} />,
-        activity: <DescreteInputsCell> <HoldingRegisters/> </DescreteInputsCell>,
-    });
-    
+        ws.onclose = function(event) {
+          console.log(`close websocket`);
+        };
 
-    data.push({
-        key: 1,
-        name: 'Discrete Inputs',
-        action: btnTrain(),
-        status:  <Badge status="success" text="Normal" />,
-        train: <Progress type="circle" size={50} percent={90} strokeColor={{ '0%': '#108ee9', '100%': '#87d068' }} />,
-        activity: <DescreteInputsCell> <HoldingRegisters/> </DescreteInputsCell>,
-    });
+        return () => {
+          ws.close();
+        };
+      }, []);
 
-    data.push({
-        key: 2,
-        name: 'Coils',
-        action: btnTrain(),
-        status:  <Badge status="success" text="Normal" />,
-        train: <Progress type="circle" size={50} percent={70} strokeColor={{ '0%': '#108ee9', '100%': '#87d068' }} />,
-        activity: <DescreteInputsCell> <HoldingRegisters/> </DescreteInputsCell>,
-    });
-
-    data.push({
-        key: 3,
-        name: 'Input Registers',
-        action: btnTrain(),
-        status:  <Badge status="success" text="Normal" />,
-        train: <Progress type="circle" size={50} percent={100} strokeColor={{ '0%': '#108ee9', '100%': '#87d068' }} />,
-        activity: <DescreteInputsCell> <HoldingRegisters/> </DescreteInputsCell>,
-    });
-
-    data.push({
-        key: 4,
-        name: 'Holding Registers',
-        action: btnTrain(),
-        status:  <Badge status="error" text="Alert" />,
-        train: <Progress type="circle" size={50} percent={0} strokeColor={{ '0%': '#108ee9', '100%': '#87d068' }} />,
-        activity: <DescreteInputsCell> <HoldingRegisters/> </DescreteInputsCell>,
-    });
 
     return (
-        <LayoutAntDesign>
-            
+        <LayoutAntDesign>    
             <div style={{ width: '100%', height: '100%' }}>
                 <Table
                     columns={columns}

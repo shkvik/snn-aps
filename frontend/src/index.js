@@ -35,26 +35,10 @@ root.render(
   </React.StrictMode>
 );
 
-try{
-  const ws = new WebSocket('ws://192.168.0.131:8080');
 
-  ws.onopen = () => {
-    console.log('WebSocket connection opened');
-  };
 
-  ws.onclose = () => {
-    console.log('WebSocket connection closed');
-  };
 
-  ws.onmessage = (event) => {
-    console.log(`Received message: ${event.data}`);
-  };
-
-  ws.send('Hello, WebSocket Server!');
-}
-catch(error){
-  console.log(error);
-}
 
 
 reportWebVitals();
+
